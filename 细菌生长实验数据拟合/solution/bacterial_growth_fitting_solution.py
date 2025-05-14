@@ -1,3 +1,4 @@
+
 import numpy as np
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
@@ -84,7 +85,7 @@ def plot_results(t, data, model_func, popt, title):
 
 if __name__ == "__main__":
     # 加载数据 - 使用绝对路径
-    data_dir = "/Users/lixh/Library/CloudStorage/OneDrive-个人/Code/cp2025-InterpolateFit/细菌生长实验数据拟合"
+    data_dir = r"C:\Users\86157\Desktop\细菌生长实验数据拟合"
     t_V, V_data = load_bacterial_data(f"{data_dir}/g149novickA.txt")
     t_W, W_data = load_bacterial_data(f"{data_dir}/g149novickB.txt")
     
