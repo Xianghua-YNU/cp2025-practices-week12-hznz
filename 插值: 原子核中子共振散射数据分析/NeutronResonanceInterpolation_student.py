@@ -9,7 +9,7 @@ error = np.array([9.34, 17.9, 41.5, 85.5, 51.5, 21.5, 10.8, 6.29, 4.14])  # mb
 
 def lagrange_interpolation(x, x_data, y_data):
     """
-    实现拉格朗日多项式插值
+    拉格朗日多项式插值
     
     参数:
         x: 插值点或数组
@@ -20,12 +20,12 @@ def lagrange_interpolation(x, x_data, y_data):
         插值结果
     """
     n = len(x_data)
-    result = np.zeros_like(x)
+    result = np.zeros_like(x, dtype=float)
     
     for i in range(n):
-        term = np.ones_like(x)
+        term = np.ones_like(x, dtype=float)
         for j in range(n):
-            if i != j:
+            if j != i:
                 term *= (x - x_data[j]) / (x_data[i] - x_data[j])
         result += y_data[i] * term
     
@@ -33,7 +33,7 @@ def lagrange_interpolation(x, x_data, y_data):
 
 def cubic_spline_interpolation(x, x_data, y_data):
     """
-    实现三次样条插值
+    三次样条插值(使用scipy的interp1d实现)
     
     参数:
         x: 插值点或数组
@@ -43,7 +43,6 @@ def cubic_spline_interpolation(x, x_data, y_data):
     返回:
         插值结果
     """
-    # 使用自然样条边界条件 (二阶导数为0)
     spline = interp1d(x_data, y_data, kind='cubic', fill_value='extrapolate')
     return spline(x)
 
@@ -58,23 +57,15 @@ def find_peak(x, y):
     返回:
         tuple: (峰值位置, FWHM)
     """
-    # 找到峰值位置
     peak_idx = np.argmax(y)
     peak_x = x[peak_idx]
     peak_y = y[peak_idx]
     
-    # 计算半高位置
+    # 计算半高全宽
     half_max = peak_y / 2
-    
-    # 找到左侧交点
     left_idx = np.argmin(np.abs(y[:peak_idx] - half_max))
-    left_x = x[left_idx]
-    
-    # 找到右侧交点
     right_idx = peak_idx + np.argmin(np.abs(y[peak_idx:] - half_max))
-    right_x = x[right_idx]
-    
-    fwhm = right_x - left_x
+    fwhm = x[right_idx] - x[left_idx]
     
     return peak_x, fwhm
 
@@ -116,11 +107,9 @@ def plot_results():
     plt.legend()
     plt.grid(True)
     
-    # 显示FWHM信息
-    plt.text(0.05, 0.9, f'Lagrange FWHM: {lagrange_fwhm:.1f} MeV', 
-            transform=plt.gca().transAxes)
-    plt.text(0.05, 0.85, f'Spline FWHM: {spline_fwhm:.1f} MeV', 
-            transform=plt.gca().transAxes)
+    # 显示峰值信息
+    print(f"Lagrange Interpolation - Peak position: {lagrange_peak:.2f} MeV, FWHM: {lagrange_fwhm:.2f} MeV")
+    print(f"Cubic Spline Interpolation - Peak position: {spline_peak:.2f} MeV, FWHM: {spline_fwhm:.2f} MeV")
     
     plt.show()
 
