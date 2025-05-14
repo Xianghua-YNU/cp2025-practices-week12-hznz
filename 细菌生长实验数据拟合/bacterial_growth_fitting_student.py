@@ -1,3 +1,4 @@
+
 import numpy as np
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
@@ -12,9 +13,9 @@ def load_bacterial_data(file_path):
     返回:
         tuple: 包含时间和酶活性测量值的元组
     """
-    # TODO: 实现数据加载功能 (大约3行代码)
-    # [STUDENT_CODE_HERE]
-    raise NotImplementedError("请在 {} 中实现此函数".format(__file__))
+    data = np.loadtxt(file_path, delimiter=',')
+    t = data[:, 0]  # 时间
+    activity = data[:, 1]  # 酶活性
     return t, activity
 
 def V_model(t, tau):
@@ -28,10 +29,7 @@ def V_model(t, tau):
     返回:
         float or numpy.ndarray: V(t)模型值
     """
-    # TODO: 根据V(t) = 1 - e^(-t/τ)实现模型函数 (1行代码)
-    # [STUDENT_CODE_HERE]
-    raise NotImplementedError("请在 {} 中实现此函数".format(__file__))
-    return result
+    return 1 - np.exp(-t / tau)
 
 def W_model(t, A, tau):
     """
@@ -45,10 +43,7 @@ def W_model(t, A, tau):
     返回:
         float or numpy.ndarray: W(t)模型值
     """
-    # TODO: 根据W(t) = A(e^(-t/τ) - 1 + t/τ)实现模型函数 (1行代码)
-    # [STUDENT_CODE_HERE]
-    raise NotImplementedError("请在 {} 中实现此函数".format(__file__))
-    return result
+    return A * (np.exp(-t / tau) - 1 + t / tau)
 
 def fit_model(t, data, model_func, p0):
     """
@@ -63,9 +58,7 @@ def fit_model(t, data, model_func, p0):
     返回:
         tuple: 拟合参数及其协方差矩阵
     """
-    # TODO: 使用scipy.optimize.curve_fit进行拟合 (1行代码)
-    # [STUDENT_CODE_HERE]
-    raise NotImplementedError("请在 {} 中实现此函数".format(__file__))
+    popt, pcov = curve_fit(model_func, t, data, p0=p0)
     return popt, pcov
 
 def plot_results(t, data, model_func, popt, title):
@@ -79,13 +72,20 @@ def plot_results(t, data, model_func, popt, title):
         popt (numpy.ndarray): 拟合参数
         title (str): 图表标题
     """
-    # TODO: 实现绘图功能 (约10行代码)
-    # [STUDENT_CODE_HERE]
-    raise NotImplementedError("请在 {} 中实现此函数".format(__file__))
+    plt.figure(figsize=(10, 6))
+    plt.plot(t, data, 'o', label='Experimental data')
+    t_fit = np.linspace(min(t), max(t), 1000)
+    plt.plot(t_fit, model_func(t_fit, *popt), '-', label='Model fit')
+    plt.xlabel('Time')
+    plt.ylabel('Activity')
+    plt.title(title)
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 
 if __name__ == "__main__":
-    # 加载数据
-    data_dir = "/Users/lixh/Library/CloudStorage/OneDrive-个人/Code/cp2025-InterpolateFit/细菌生长实验数据拟合" # 请替换为你的数据目录
+    # 加载数据 - 使用绝对路径
+    data_dir = r"C:\Users\86157\Desktop\细菌生长实验数据拟合"
     t_V, V_data = load_bacterial_data(f"{data_dir}/g149novickA.txt")
     t_W, W_data = load_bacterial_data(f"{data_dir}/g149novickB.txt")
     
